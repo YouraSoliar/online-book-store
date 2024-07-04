@@ -21,8 +21,13 @@ public class OnlineBookStoreApplication {
     @Bean
     public CommandLineRunner commandLineRunner() {
         return args -> {
-            Book book = new Book("Harry", "Yurii", "isbn",
-                    new BigDecimal(1000), "magic", "glasses");
+            Book book = new Book();
+            book.setAuthor("Yurii");
+            book.setIsbn("isbn");
+            book.setPrice(new BigDecimal(1000));
+            book.setTitle("Harry");
+            book.setDescription("magic");
+            book.setCoverImage("glasses");
             bookService.save(book);
             System.out.println(bookService.findAll());
         };

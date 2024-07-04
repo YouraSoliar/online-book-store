@@ -7,10 +7,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "books")
 public class Book {
     @Id
@@ -26,17 +28,4 @@ public class Book {
     private BigDecimal price;
     private String description;
     private String coverImage;
-
-    public Book() {
-    }
-
-    public Book(String title, String author, String isbn,
-                BigDecimal price, String description, String coverImage) {
-        this.title = title;
-        this.author = author;
-        this.isbn = isbn;
-        this.price = price;
-        this.description = description;
-        this.coverImage = coverImage;
-    }
 }

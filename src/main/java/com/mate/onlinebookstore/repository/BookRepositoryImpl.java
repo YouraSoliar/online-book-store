@@ -2,49 +2,34 @@ package com.mate.onlinebookstore.repository;
 
 import com.mate.onlinebookstore.model.Book;
 import java.util.List;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Optional;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 @Repository
+@RequiredArgsConstructor
 public class BookRepositoryImpl implements BookRepository {
-    private final SessionFactory sessionFactory;
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    @Autowired
-    public BookRepositoryImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
+    @Transactional
     @Override
     public Book save(Book book) {
-        Session session = null;
-        Transaction transaction = null;
-        try {
-            session = sessionFactory.openSession();
-            transaction = session.beginTransaction();
-            session.persist(book);
-            transaction.commit();
-            return book;
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            throw new RuntimeException("Can`t insert book into DB " + book, e);
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
+        entityManager.persist(book);
+        return book;
     }
 
     @Override
     public List<Book> findAll() {
-        try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("SELECT b FROM Book b", Book.class).getResultList();
-        } catch (Exception e) {
-            throw new RuntimeException("Can`t get all books from DB", e);
-        }
+        return entityManager.createQuery("SELECT b FROM Book b", Book.class).getResultList();
+    }
+
+    @Override
+    public Optional<Book> findById(Long id) {
+        Book book = entityManager.find(Book.class, id);
+        return Optional.ofNullable(book);
     }
 }
